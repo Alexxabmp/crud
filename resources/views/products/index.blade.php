@@ -91,7 +91,7 @@
 
                         {{-- Price + Status --}}
                         <div class="row-right" style="flex-direction:column;align-items:flex-end;gap:4px;">
-                            <span class="price-val" style="font-size:14px;">
+                            <span style="font-size:14px;font-weight:600;color:#000;">
                                 ₱{{ number_format($product->price, 2) }}
                             </span>
                             <span class="ios-badge {{ $product->is_active ? 'badge-active' : 'badge-inactive' }}">
