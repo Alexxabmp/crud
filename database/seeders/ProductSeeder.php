@@ -18,7 +18,6 @@ class ProductSeeder extends Seeder
                 'price'          => 59999.00,
                 'stock_quantity' => 45,
                 'expiry_date'    => null,
-                'image'          => null,
                 'is_active'      => true,
             ],
             [
@@ -29,7 +28,6 @@ class ProductSeeder extends Seeder
                 'price'          => 6499.00,
                 'stock_quantity' => 120,
                 'expiry_date'    => null,
-                'image'          => null,
                 'is_active'      => true,
             ],
             [
@@ -40,7 +38,6 @@ class ProductSeeder extends Seeder
                 'price'          => 349.75,
                 'stock_quantity' => 300,
                 'expiry_date'    => '2027-06-30',
-                'image'          => null,
                 'is_active'      => true,
             ],
             [
@@ -51,7 +48,6 @@ class ProductSeeder extends Seeder
                 'price'          => 189.50,
                 'stock_quantity' => 8,
                 'expiry_date'    => '2026-12-31',
-                'image'          => null,
                 'is_active'      => true,
             ],
             [
@@ -62,7 +58,6 @@ class ProductSeeder extends Seeder
                 'price'          => 89999.99,
                 'stock_quantity' => 15,
                 'expiry_date'    => null,
-                'image'          => null,
                 'is_active'      => true,
             ],
             [
@@ -73,7 +68,6 @@ class ProductSeeder extends Seeder
                 'price'          => 4299.00,
                 'stock_quantity' => 0,
                 'expiry_date'    => null,
-                'image'          => null,
                 'is_active'      => false,
             ],
             [
@@ -84,7 +78,6 @@ class ProductSeeder extends Seeder
                 'price'          => 899.00,
                 'stock_quantity' => 55,
                 'expiry_date'    => null,
-                'image'          => null,
                 'is_active'      => true,
             ],
             [
@@ -95,7 +88,6 @@ class ProductSeeder extends Seeder
                 'price'          => 7999.00,
                 'stock_quantity' => 22,
                 'expiry_date'    => null,
-                'image'          => null,
                 'is_active'      => true,
             ],
         ];

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+
 
 class ProductController extends Controller
 {
@@ -50,17 +50,11 @@ class ProductController extends Controller
             'price'          => 'required|numeric|min:0|max:99999999.99',
             'stock_quantity' => 'required|integer|min:0|max:2147483647',
             'expiry_date'    => 'nullable|date|after_or_equal:today',
-            'image'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'is_active'      => 'boolean',
         ]);
 
         // Handle boolean checkbox
         $validated['is_active'] = $request->has('is_active');
-
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', 'public');
-        }
 
         Product::create($validated);
 
@@ -98,20 +92,10 @@ class ProductController extends Controller
             'price'          => 'required|numeric|min:0|max:99999999.99',
             'stock_quantity' => 'required|integer|min:0|max:2147483647',
             'expiry_date'    => 'nullable|date',
-            'image'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'is_active'      => 'boolean',
         ]);
 
         $validated['is_active'] = $request->has('is_active');
-
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
-            }
-            $validated['image'] = $request->file('image')->store('products', 'public');
-        }
 
         $product->update($validated);
 
@@ -124,11 +108,6 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // Delete image from storage
-        if ($product->image) {
-            Storage::disk('public')->delete($product->image);
-        }
-
         $product->delete();
 
         return redirect()->route('products.index')

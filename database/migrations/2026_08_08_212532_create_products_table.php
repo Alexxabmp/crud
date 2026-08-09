@@ -27,7 +27,6 @@ return new class extends Migration
             $table->decimal('price', 10, 2);                     // DECIMAL(10,2) — float/double
             $table->integer('stock_quantity')->default(0);       // INT
             $table->date('expiry_date')->nullable();             // DATE
-            $table->string('image')->nullable();                 // VARCHAR(255) — file path
             $table->boolean('is_active')->default(true);        // TINYINT(1) — BOOLEAN
             $table->timestamps();                                // DATETIME (created_at, updated_at)
         });

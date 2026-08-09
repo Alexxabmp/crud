@@ -17,7 +17,6 @@ class Product extends Model
         'price',
         'stock_quantity',
         'expiry_date',
-        'image',
         'is_active',
     ];
 
