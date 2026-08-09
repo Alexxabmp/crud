@@ -1,232 +1,151 @@
 @extends('layouts.app')
 
 @section('title', 'Products')
-@section('page-title', 'Product Inventory')
-@section('page-subtitle', 'Browse, search, and manage all products')
+@section('page-title', 'All Products')
 
 @section('topbar-actions')
-    <a href="{{ route('products.create') }}" class="btn-primary-custom" id="btn-add-product">
-        <i class="bi bi-plus-lg"></i> Add Product
+    <a href="{{ route('products.create') }}" class="ios-btn ios-btn-primary ios-btn-sm">
+        <i class="bi bi-plus"></i> Add
     </a>
 @endsection
 
 @section('content')
-{{-- Stats Row --}}
-<div class="row g-3 mb-4">
-    @php
-        $total    = \App\Models\Product::count();
-        $active   = \App\Models\Product::where('is_active', true)->count();
-        $inactive = $total - $active;
-        $lowStock = \App\Models\Product::where('stock_quantity', '<', 10)->count();
-    @endphp
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
-            <div class="stat-icon purple"><i class="bi bi-box-seam"></i></div>
-            <div class="stat-info">
-                <div class="stat-value">{{ number_format($total) }}</div>
-                <div class="stat-label">Total Products</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
-            <div class="stat-icon green"><i class="bi bi-check-circle"></i></div>
-            <div class="stat-info">
-                <div class="stat-value">{{ number_format($active) }}</div>
-                <div class="stat-label">Active Products</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
-            <div class="stat-icon red"><i class="bi bi-x-circle"></i></div>
-            <div class="stat-info">
-                <div class="stat-value">{{ number_format($inactive) }}</div>
-                <div class="stat-label">Inactive Products</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
-            <div class="stat-icon yellow"><i class="bi bi-exclamation-triangle"></i></div>
-            <div class="stat-info">
-                <div class="stat-value">{{ number_format($lowStock) }}</div>
-                <div class="stat-label">Low Stock (&lt;10)</div>
-            </div>
-        </div>
-    </div>
-</div>
 
-{{-- Data Table Card --}}
-<div class="card-glass">
-    <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-3">
-        <div>
-            <h5 style="font-weight:700; font-size:1rem; margin:0;">All Products</h5>
-            <p style="font-size:0.75rem; color:var(--text-secondary); margin:0;">
-                {{ $products->total() }} record(s) found
-                @if($search) for "<strong>{{ $search }}</strong>" @endif
-            </p>
+    {{-- Stats Grid --}}
+    <div class="ios-stats-grid">
+        <div class="ios-stat-card">
+            <div class="ios-stat-icon icon-pink"><i class="bi bi-box-seam"></i></div>
+            <div class="ios-stat-value">{{ $products->total() }}</div>
+            <div class="ios-stat-label">Total Products</div>
         </div>
-        {{-- Search Form --}}
-        <form method="GET" action="{{ route('products.index') }}" id="searchForm" style="display:flex; gap:10px; align-items:center;">
-            <div class="search-box">
+        <div class="ios-stat-card">
+            <div class="ios-stat-icon icon-green"><i class="bi bi-check-circle"></i></div>
+            <div class="ios-stat-value">{{ \App\Models\Product::where('is_active', true)->count() }}</div>
+            <div class="ios-stat-label">Active</div>
+        </div>
+        <div class="ios-stat-card">
+            <div class="ios-stat-icon icon-red"><i class="bi bi-x-circle"></i></div>
+            <div class="ios-stat-value">{{ \App\Models\Product::where('is_active', false)->count() }}</div>
+            <div class="ios-stat-label">Inactive</div>
+        </div>
+        <div class="ios-stat-card">
+            <div class="ios-stat-icon icon-orange"><i class="bi bi-exclamation-triangle"></i></div>
+            <div class="ios-stat-value">{{ \App\Models\Product::where('stock_quantity', '<', 10)->count() }}</div>
+            <div class="ios-stat-label">Low Stock</div>
+        </div>
+    </div>
+
+    {{-- Search --}}
+    <form method="GET" action="{{ route('products.index') }}">
+        <div class="ios-search-wrap">
+            <div class="ios-search">
                 <i class="bi bi-search"></i>
-                <input
-                    type="text"
-                    name="search"
-                    id="searchInput"
-                    class="search-input form-control"
-                    placeholder="Search name, SKU, category..."
-                    value="{{ $search }}"
-                    autocomplete="off"
-                    style="width: 260px;"
-                >
-            </div>
-            <button type="submit" class="btn-primary-custom" id="btn-search">
-                <i class="bi bi-search"></i> Search
-            </button>
-            @if($search)
-                <a href="{{ route('products.index') }}" class="btn-outline-custom" id="btn-clear-search">
-                    <i class="bi bi-x-lg"></i> Clear
-                </a>
-            @endif
-        </form>
-    </div>
-
-    <div class="card-body" style="padding:0;">
-        @if($products->count() > 0)
-        <div style="overflow-x:auto;">
-            <table class="data-table" id="productsTable">
-                <thead>
-                    <tr>
-                        <th style="width:50px;">#</th>
-                        <th style="width:50px;">Image</th>
-                        <th>Product Name</th>
-                        <th>SKU</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th>Stock</th>
-                        <th>Expiry</th>
-                        <th>Status</th>
-                        <th style="width:130px; text-align:center;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($products as $index => $product)
-                    <tr>
-                        <td style="color:var(--text-muted); font-size:0.78rem;">
-                            {{ ($products->currentPage() - 1) * $products->perPage() + $loop->iteration }}
-                        </td>
-                        <td>
-                            @if($product->image)
-                                <img src="{{ asset('storage/' . $product->image) }}"
-                                     alt="{{ $product->name }}"
-                                     class="product-img">
-                            @else
-                                <div class="product-img-placeholder">
-                                    <i class="bi bi-box-seam"></i>
-                                </div>
-                            @endif
-                        </td>
-                        <td>
-                            <div style="font-weight:600; font-size:0.88rem;">{{ $product->name }}</div>
-                            <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">
-                                Added {{ $product->created_at->diffForHumans() }}
-                            </div>
-                        </td>
-                        <td><span class="sku-text">{{ $product->sku }}</span></td>
-                        <td><span class="badge-category">{{ $product->category }}</span></td>
-                        <td><span class="price-text">₱{{ number_format($product->price, 2) }}</span></td>
-                        <td>
-                            @if($product->stock_quantity < 10)
-                                <span style="color:var(--warning-color); font-weight:600;">
-                                    <i class="bi bi-exclamation-triangle-fill" style="font-size:0.75rem;"></i>
-                                    {{ number_format($product->stock_quantity) }}
-                                </span>
-                            @else
-                                {{ number_format($product->stock_quantity) }}
-                            @endif
-                        </td>
-                        <td style="font-size:0.82rem; color:var(--text-secondary);">
-                            {{ $product->expiry_date ? $product->expiry_date->format('M d, Y') : '—' }}
-                        </td>
-                        <td>
-                            @if($product->is_active)
-                                <span class="badge-active"><i class="bi bi-circle-fill" style="font-size:0.5rem;"></i> Active</span>
-                            @else
-                                <span class="badge-inactive"><i class="bi bi-circle-fill" style="font-size:0.5rem;"></i> Inactive</span>
-                            @endif
-                        </td>
-                        <td style="text-align:center;">
-                            <div style="display:flex; gap:6px; justify-content:center;">
-                                {{-- View --}}
-                                <a href="{{ route('products.show', $product) }}"
-                                   class="action-btn view"
-                                   title="View Details"
-                                   id="btn-view-{{ $product->id }}">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                                {{-- Edit --}}
-                                <a href="{{ route('products.edit', $product) }}"
-                                   class="action-btn edit"
-                                   title="Edit"
-                                   id="btn-edit-{{ $product->id }}">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                {{-- Delete --}}
-                                <button class="action-btn delete"
-                                        title="Delete"
-                                        id="btn-delete-{{ $product->id }}"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteModal"
-                                        data-product-id="{{ $product->id }}"
-                                        data-product-name="{{ $product->name }}">
-                                    <i class="bi bi-trash3"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        {{-- Pagination --}}
-        @if($products->hasPages())
-        <div style="padding: 16px 24px; border-top: 1px solid var(--border-color); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
-            <div style="font-size:0.78rem; color:var(--text-muted);">
-                Showing {{ $products->firstItem() }}–{{ $products->lastItem() }} of {{ $products->total() }} products
-            </div>
-            {{ $products->links() }}
-        </div>
-        @endif
-
-        @else
-        <div class="empty-state">
-            <div class="empty-icon"><i class="bi bi-inbox"></i></div>
-            <h5>No products found</h5>
-            <p>
+                <input type="text" name="search" value="{{ $search }}"
+                       placeholder="Search products, SKU…">
                 @if($search)
-                    No results for "{{ $search }}". Try a different keyword.
-                @else
-                    Get started by adding your first product.
+                    <a href="{{ route('products.index') }}" style="color:var(--ios-gray);text-decoration:none;font-size:18px;">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </a>
                 @endif
-            </p>
-            @if(!$search)
-            <a href="{{ route('products.create') }}" class="btn-primary-custom mt-3 d-inline-flex" id="btn-add-first">
-                <i class="bi bi-plus-lg"></i> Add First Product
-            </a>
-            @endif
+            </div>
         </div>
+    </form>
+
+    {{-- Product List --}}
+    <div class="ios-section">
+        @if($search)
+            <div class="ios-section-header">Results for "{{ $search }}"</div>
+        @else
+            <div class="ios-section-header">Inventory ({{ $products->total() }})</div>
+        @endif
+
+        @if($products->isEmpty())
+            <div class="ios-card">
+                <div class="ios-empty">
+                    <span class="empty-icon"><i class="bi bi-box-seam"></i></span>
+                    <h3>No Products Found</h3>
+                    <p>{{ $search ? 'Try a different search term.' : 'Add your first product to get started.' }}</p>
+                    <a href="{{ route('products.create') }}" class="ios-btn ios-btn-primary">
+                        <i class="bi bi-plus"></i> Add Product
+                    </a>
+                </div>
+            </div>
+        @else
+            <div class="ios-card">
+                @foreach($products as $product)
+                    <div class="ios-card-row">
+                        {{-- Image / Placeholder --}}
+                        @if($product->image && file_exists(storage_path('app/public/' . $product->image)))
+                            <img src="{{ asset('storage/' . $product->image) }}"
+                                 alt="{{ $product->name }}" class="product-avatar">
+                        @else
+                            <div class="product-avatar-placeholder">📦</div>
+                        @endif
+
+                        {{-- Content --}}
+                        <div class="row-content">
+                            <div class="row-title">{{ $product->name }}</div>
+                            <div class="row-subtitle">
+                                <span class="sku-val">{{ $product->sku }}</span>
+                                &nbsp;·&nbsp;
+                                <span class="badge-cat ios-badge">{{ $product->category }}</span>
+                            </div>
+                        </div>
+
+                        {{-- Right side --}}
+                        <div class="row-right" style="flex-direction:column; align-items:flex-end; gap:6px;">
+                            <span class="price-val" style="font-size:15px;">₱{{ number_format($product->price, 2) }}</span>
+                            <span class="{{ $product->is_active ? 'badge-active' : 'badge-inactive' }} ios-badge">
+                                {{ $product->is_active ? 'Active' : 'Inactive' }}
+                            </span>
+                        </div>
+
+                        {{-- Actions --}}
+                        <div class="ios-row-actions" style="margin-left:8px;">
+                            <a href="{{ route('products.show', $product) }}" class="ios-icon-btn view">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ route('products.edit', $product) }}" class="ios-icon-btn edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button class="ios-icon-btn delete"
+                                onclick="openDeleteModal({{ $product->id }}, '{{ addslashes($product->name) }}')">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            {{-- Pagination --}}
+            @if($products->hasPages())
+                <div class="ios-pagination">
+                    @if($products->onFirstPage())
+                        <span class="page-disabled"><i class="bi bi-chevron-left"></i></span>
+                    @else
+                        <a href="{{ $products->previousPageUrl() }}&search={{ $search }}" class="page-link-item">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    @endif
+
+                    @foreach($products->getUrlRange(1, $products->lastPage()) as $page => $url)
+                        @if($page == $products->currentPage())
+                            <span class="page-current">{{ $page }}</span>
+                        @else
+                            <a href="{{ $url }}&search={{ $search }}" class="page-link-item">{{ $page }}</a>
+                        @endif
+                    @endforeach
+
+                    @if($products->hasMorePages())
+                        <a href="{{ $products->nextPageUrl() }}&search={{ $search }}" class="page-link-item">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    @else
+                        <span class="page-disabled"><i class="bi bi-chevron-right"></i></span>
+                    @endif
+                </div>
+            @endif
         @endif
     </div>
-</div>
-@endsection
 
-@push('styles')
-<style>
-    /* Override Bootstrap pagination */
-    .pagination { margin: 0; }
-    nav[aria-label="pagination"] ul { margin:0; }
-</style>
-@endpush
+@endsection
