@@ -4,8 +4,8 @@
 @section('page-title', 'Edit Product')
 
 @section('back-btn')
-    <a href="{{ route('products.show', $product) }}" class="ios-back-btn">
-        <i class="bi bi-chevron-left"></i> Detail
+    <a href="{{ route('products.index') }}" class="ios-back-btn">
+        <i class="bi bi-chevron-left"></i> Products
     </a>
 @endsection
 
@@ -98,7 +98,7 @@
 
             {{-- Actions --}}
             <div style="margin-top:8px;margin-bottom:32px;display:flex;gap:10px;">
-                <a href="{{ route('products.show', $product) }}"
+                <a href="{{ route('products.index') }}"
                    class="ios-btn ios-btn-gray ios-btn-full" style="flex:1;justify-content:center;">
                     Cancel
                 </a>
