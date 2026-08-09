@@ -4,19 +4,19 @@
 @section('page-title', 'All Products')
 
 @section('topbar-actions')
-    <a href="{{ route('products.create') }}" class="ios-btn ios-btn-primary ios-btn-sm">
+    <a href="{{ route('products.create') }}" class="ios-btn ios-btn-blue ios-btn-sm">
         <i class="bi bi-plus"></i> Add
     </a>
 @endsection
 
 @section('content')
 
-    {{-- Stats Grid --}}
+    {{-- Compact Stats --}}
     <div class="ios-stats-grid">
         <div class="ios-stat-card">
-            <div class="ios-stat-icon icon-pink"><i class="bi bi-box-seam"></i></div>
-            <div class="ios-stat-value">{{ $products->total() }}</div>
-            <div class="ios-stat-label">Total Products</div>
+            <div class="ios-stat-icon icon-blue"><i class="bi bi-box-seam"></i></div>
+            <div class="ios-stat-value">{{ \App\Models\Product::count() }}</div>
+            <div class="ios-stat-label">Total</div>
         </div>
         <div class="ios-stat-card">
             <div class="ios-stat-icon icon-green"><i class="bi bi-check-circle"></i></div>
@@ -40,12 +40,17 @@
         <div class="ios-search-wrap">
             <div class="ios-search">
                 <i class="bi bi-search"></i>
-                <input type="text" name="search" value="{{ $search }}"
-                       placeholder="Search products, SKU…">
+                <input type="text" name="search" value="{{ $search }}" placeholder="Search…">
                 @if($search)
-                    <a href="{{ route('products.index') }}" style="color:var(--ios-gray);text-decoration:none;font-size:18px;">
+                    <a href="{{ route('products.index') }}"
+                       style="color:var(--ios-gray);text-decoration:none;font-size:16px;line-height:1;">
                         <i class="bi bi-x-circle-fill"></i>
                     </a>
+                @else
+                    <button type="submit"
+                            style="background:none;border:none;color:var(--ios-blue);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;padding:0;">
+                        Search
+                    </button>
                 @endif
             </div>
         </div>
@@ -64,8 +69,8 @@
                 <div class="ios-empty">
                     <span class="empty-icon"><i class="bi bi-box-seam"></i></span>
                     <h3>No Products Found</h3>
-                    <p>{{ $search ? 'Try a different search term.' : 'Add your first product to get started.' }}</p>
-                    <a href="{{ route('products.create') }}" class="ios-btn ios-btn-primary">
+                    <p>{{ $search ? 'Try a different search term.' : 'Add your first product.' }}</p>
+                    <a href="{{ route('products.create') }}" class="ios-btn ios-btn-blue">
                         <i class="bi bi-plus"></i> Add Product
                     </a>
                 </div>
@@ -74,41 +79,37 @@
             <div class="ios-card">
                 @foreach($products as $product)
                     <div class="ios-card-row">
-                        {{-- Image / Placeholder --}}
-                        @if($product->image && file_exists(storage_path('app/public/' . $product->image)))
-                            <img src="{{ asset('storage/' . $product->image) }}"
-                                 alt="{{ $product->name }}" class="product-avatar">
-                        @else
-                            <div class="product-avatar-placeholder">📦</div>
-                        @endif
-
                         {{-- Content --}}
                         <div class="row-content">
                             <div class="row-title">{{ $product->name }}</div>
                             <div class="row-subtitle">
                                 <span class="sku-val">{{ $product->sku }}</span>
                                 &nbsp;·&nbsp;
-                                <span class="badge-cat ios-badge">{{ $product->category }}</span>
+                                <span class="ios-badge badge-cat">{{ $product->category }}</span>
                             </div>
                         </div>
 
-                        {{-- Right side --}}
-                        <div class="row-right" style="flex-direction:column; align-items:flex-end; gap:6px;">
-                            <span class="price-val" style="font-size:15px;">₱{{ number_format($product->price, 2) }}</span>
-                            <span class="{{ $product->is_active ? 'badge-active' : 'badge-inactive' }} ios-badge">
+                        {{-- Price + Status --}}
+                        <div class="row-right" style="flex-direction:column;align-items:flex-end;gap:4px;">
+                            <span class="price-val" style="font-size:14px;">
+                                ₱{{ number_format($product->price, 2) }}
+                            </span>
+                            <span class="ios-badge {{ $product->is_active ? 'badge-active' : 'badge-inactive' }}">
                                 {{ $product->is_active ? 'Active' : 'Inactive' }}
                             </span>
                         </div>
 
                         {{-- Actions --}}
-                        <div class="ios-row-actions" style="margin-left:8px;">
-                            <a href="{{ route('products.show', $product) }}" class="ios-icon-btn view">
+                        <div class="ios-row-actions" style="margin-left:6px;">
+                            <a href="{{ route('products.show', $product) }}" class="ios-icon-btn view"
+                               title="View">
                                 <i class="bi bi-eye"></i>
                             </a>
-                            <a href="{{ route('products.edit', $product) }}" class="ios-icon-btn edit">
+                            <a href="{{ route('products.edit', $product) }}" class="ios-icon-btn edit"
+                               title="Edit">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <button class="ios-icon-btn delete"
+                            <button class="ios-icon-btn delete" title="Delete"
                                 onclick="openDeleteModal({{ $product->id }}, '{{ addslashes($product->name) }}')">
                                 <i class="bi bi-trash3"></i>
                             </button>
