@@ -40,7 +40,7 @@
                     <label class="ios-form-label">Category <span class="req">*</span></label>
                     <select name="category" class="ios-input">
                         <option value="">Select…</option>
-                        @foreach(['Electronics','Clothing','Food & Beverages','Health & Beauty','Home & Living','Books & Media','Toys & Games','Other'] as $cat)
+                        @foreach(\App\Models\Product::$categories as $cat)
                             <option value="{{ $cat }}"
                                 {{ old('category', $product->category) == $cat ? 'selected' : '' }}>
                                 {{ $cat }}
