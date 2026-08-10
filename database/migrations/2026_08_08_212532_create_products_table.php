@@ -13,15 +13,9 @@ return new class extends Migration
             $table->string('name', 150);                          // VARCHAR(150)
             $table->string('sku', 50)->unique();                  // VARCHAR(50) UNIQUE
             $table->enum('category', [                            // ENUM
-                'Electronics',
-                'Clothing',
-                'Food & Beverages',
-                'Health & Beauty',
-                'Home & Living',
-                'Sports & Outdoors',
-                'Books & Media',
-                'Toys & Games',
-                'Other',
+                'Pain Relievers (Analgesics)',
+                'Infection Fighters (Antibiotics)',
+                'Stomach Acid Reducers (Antacids)',
             ]);
             $table->text('description')->nullable();              // TEXT
             $table->decimal('price', 10, 2);                     // DECIMAL(10,2) — float/double

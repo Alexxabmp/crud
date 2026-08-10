@@ -29,14 +29,8 @@ class Product extends Model
 
     // Category options as a constant for reuse in views/validation
     public static array $categories = [
-        'Electronics',
-        'Clothing',
-        'Food & Beverages',
-        'Health & Beauty',
-        'Home & Living',
-        'Sports & Outdoors',
-        'Books & Media',
-        'Toys & Games',
-        'Other',
+        'Pain Relievers (Analgesics)',
+        'Infection Fighters (Antibiotics)',
+        'Stomach Acid Reducers (Antacids)',
     ];
 }
